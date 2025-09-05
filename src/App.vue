@@ -79,7 +79,17 @@
     </div>
 </template>
 <script setup>
-  import { computed, reactive } from 'vue';
+  import { computed, onMounted, reactive } from 'vue';
+
+  onMounted(()=> {
+    let localBasket = localStorage.getItem("totalBasket");
+    if (localBasket) {
+      basket.push(...JSON.parse(localBasket))
+    } else {
+      basket.push(...defaultBasket)
+    }
+  })
+  
   const basket = reactive([]);
   const defaultBasket = [
     {
@@ -111,12 +121,6 @@
     },
   ]
 
-  let localBasket = localStorage.getItem("totalBasket");
-  if (localBasket) {
-    basket.push(...JSON.parse(localBasket))
-  } else {
-    basket.push(...defaultBasket)
-  }
   function increaseItemQuantity(item) {
     basket.forEach(product => {
       if (product.name === item) {
