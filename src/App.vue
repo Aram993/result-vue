@@ -80,7 +80,8 @@
 </template>
 <script setup>
   import { computed, reactive } from 'vue';
-  const basket = reactive([
+  const basket = reactive([]);
+  const defaultBasket = [
     {
       id: 1,
       name: 'Blue Flower Print Crop Top',
@@ -108,12 +109,19 @@
       quantity: 1,
       imageUrl: 'src/assets/sweatshirt.png',
     },
-  ])
+  ]
 
+  let localBasket = localStorage.getItem("totalBasket");
+  if (localBasket) {
+    basket.push(...JSON.parse(localBasket))
+  } else {
+    basket.push(...defaultBasket)
+  }
   function increaseItemQuantity(item) {
     basket.forEach(product => {
       if (product.name === item) {
         product.quantity++
+        localStorage.setItem("totalBasket", JSON.stringify(basket))
       }
 
     })
@@ -125,6 +133,7 @@
 
       if (product.name === item) {
         product.quantity--
+        localStorage.setItem("totalBasket", JSON.stringify(basket))
       }
 
     })
@@ -132,6 +141,10 @@
 
   function removeItem(index) {
     basket.splice(index, 1)
+    localStorage.setItem("totalBasket", JSON.stringify(basket))
+    if (!basket.length) {
+      localStorage.removeItem("totalBasket")
+    }
   }
 
   const subtotal = computed(()=> {
